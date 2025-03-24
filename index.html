@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trading𝗦𝗜𝗠 P͎R͎O͎</title>
+    <link
+      rel="icon"
+      href="./9882eaaf-4f09-4ec3-948b-aa37a8a5a73e_removalai_preview.png"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Arial", sans-serif;
+      }
+
+      body {
+        background-color: #121826;
+        color: #ffffff;
+        padding: 10px;
+        min-height: 100vh;
+      }
+
+      .container {
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        gap: 10px;
+        height: calc(100vh - 20px);
+      }
+
+      .sidebar {
+        background-color: #1e293b;
+        border-radius: 8px;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+      }
+
+      .main-content {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        gap: 10px;
+        height: 100%;
+      }
+
+      .stock-info,
+      .prediction-game {
+        background-color: #1e293b;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 10px;
+      }
+
+      .chart-container {
+        background-color: #1e293b;
+        border-radius: 8px;
+        padding: 15px;
+        height: 300px;
+        position: relative;
+      }
+
+      .trading-panel {
+        background-color: #1e293b;
+        border-radius: 8px;
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      h1 {
+        color: #3b82f6;
+        font-size: 1.5rem;
+        margin-bottom: 8px;
+      }
+
+      h2 {
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+        color: #94a3b8;
+      }
+
+      .stock-price {
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin: 8px 0;
+      }
+
+      .stock-details {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+        font-size: 0.9rem;
+        color: #94a3b8;
+      }
+
+      #tradingChart {
+        width: 100%;
+        height: 100%;
+        background-color: #0f172a;
+        border-radius: 5px;
+      }
+
+      .chart-controls {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+      }
+
+      .chart-button {
+        background-color: #334155;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        white-space: nowrap;
+      }
+
+      .chart-button:hover {
+        background-color: #3b82f6;
+      }
+
+      .trading-button {
+        background-color: #3b82f6;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+        white-space: nowrap;
+      }
+
+      .trading-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .short-button {
+        background-color: #ef4444;
+      }
+
+      .time-settings {
+        color: #94a3b8;
+        font-size: 0.8rem;
+        white-space: nowrap;
+      }
+
+      .prediction-game {
+        background-color: #1e293b;
+        border-radius: 8px;
+        padding: 15px;
+        margin-top: 10px;
+      }
+
+      .prediction-buttons {
+        display: flex;
+        gap: 10px;
+        margin: 10px 0;
+        flex-wrap: wrap;
+      }
+
+      .up-button {
+        background-color: #10b981;
+      }
+
+      .down-button {
+        background-color: #ef4444;
+      }
+
+      .account-balance {
+        font-size: 1.1rem;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #334155;
+      }
+
+      .balance-amount {
+        font-weight: bold;
+        color: #3b82f6;
+      }
+
+      .result-message {
+        margin-top: 10px;
+        padding: 8px;
+        border-radius: 5px;
+        text-align: center;
+        display: none;
+        font-size: 0.9rem;
+      }
+
+      .win {
+        background-color: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+      }
+
+      .lose {
+        background-color: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+      }
+
+      .price-scale {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        background-color: rgba(15, 23, 42, 0.7);
+        padding: 5px;
+        border-radius: 3px;
+        font-size: 0.8rem;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .container {
+          grid-template-columns: 1fr;
+          height: auto;
+        }
+
+        .sidebar {
+          order: 2;
+        }
+
+        .chart-container {
+          height: 250px;
+        }
+
+        .trading-panel {
+          justify-content: center;
+        }
+
+        .stock-price {
+          font-size: 1.5rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .chart-container {
+          height: 200px;
+        }
+
+        .trading-button,
+        .chart-button {
+          padding: 6px 12px;
+          font-size: 0.8rem;
+        }
+
+        .stock-info,
+        .prediction-game {
+          padding: 12px;
+        }
+
+        .stock-price {
+          font-size: 1.3rem;
+        }
+
+        .price-scale {
+          right: 10px;
+          top: 10px;
+          font-size: 0.7rem;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .chart-container {
+          height: 180px;
+        }
+
+        .trading-panel {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .trading-button {
+          width: 100%;
+          margin-bottom: 5px;
+        }
+
+        .time-settings {
+          text-align: center;
+          margin-top: 5px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="sidebar">
+        <h1>TradingSim</h1>
+        <div class="stock-info">
+          <h2>TSLA</h2>
+          <div id="currentTime"></div>
+          <div class="stock-price" id="stockPrice">123.36</div>
+          <div class="stock-details">
+            <span>L: <span id="lowPrice">120.90</span></span>
+            <span>C: <span id="closePrice">121.13</span></span>
+            <span>B: SMA <span id="smaPrice">121.45</span></span>
+          </div>
+        </div>
+
+        <div class="prediction-game">
+          <h2>Price Prediction</h2>
+          <div class="prediction-buttons">
+            <button class="trading-button up-button" id="predictUp">
+              UP ↑
+            </button>
+            <button class="trading-button down-button" id="predictDown">
+              DOWN ↓
+            </button>
+          </div>
+          <div id="resultMessage" class="result-message"></div>
+          <div class="account-balance">
+            Balance:
+            <span class="balance-amount" id="accountBalance">$654.00</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div class="chart-container">
+          <div class="price-scale" id="priceScale">
+            <div>125.00</div>
+            <div>120.00</div>
+            <div>115.00</div>
+          </div>
+          <canvas id="tradingChart"></canvas>
+        </div>
+
+        <div class="trading-panel">
+          <button class="trading-button" id="buyButton">Buy</button>
+          <button class="trading-button">Sign to Session</button>
+          <button class="trading-button short-button" id="shortButton">
+            Short
+          </button>
+          <button class="trading-button">Cover</button>
+          <div class="time-settings" id="marketTime"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      // Account balance
+      // Balansni o'qish
+      let accountBalance = localStorage.getItem("tradingSimBalance");
+      accountBalance = accountBalance ? parseFloat(accountBalance) : 654.0;
+
+      // Balansni saqlash
+      localStorage.setItem("tradingSimBalance", accountBalance.toString());
+      let currentPrediction = null;
+      let startPriceForPrediction = null;
+      let predictionTimeout = null;
+      let currentPrice = 123.36;
+      let priceHistory = Array.from(
+        { length: 30 },
+        (_, i) => 120 + Math.sin(i / 3) * 5 + Math.random() * 2
+      );
+
+      // Initialize
+      updateBalanceDisplay();
+      updateDateTime();
+      updateStockPrice();
+
+      // Update account balance display
+      function updateBalanceDisplay() {
+        document.getElementById(
+          "accountBalance"
+        ).textContent = `$${accountBalance.toFixed(2)}`;
+      }
+
+      // Update time and date
+      function updateDateTime() {
+        const now = new Date();
+        document.getElementById("currentTime").textContent =
+          now.toLocaleTimeString();
+        document.getElementById("marketTime").textContent =
+          now.toLocaleTimeString();
+      }
+
+      // Update stock price
+      function updateStockPrice() {
+        const change = (Math.random() - 0.5) * 1.5;
+        currentPrice += change;
+        priceHistory.push(currentPrice);
+        priceHistory.shift();
+
+        document.getElementById("stockPrice").textContent =
+          currentPrice.toFixed(2);
+        document.getElementById("lowPrice").textContent = (
+          currentPrice - 2.46
+        ).toFixed(2);
+        document.getElementById("closePrice").textContent = (
+          currentPrice - 2.23
+        ).toFixed(2);
+        document.getElementById("smaPrice").textContent = (
+          currentPrice - 1.91
+        ).toFixed(2);
+
+        const priceElement = document.getElementById("stockPrice");
+        priceElement.style.color = change > 0 ? "#10b981" : "#ef4444";
+
+        updatePriceScale();
+        return change;
+      }
+
+      // Update price scale
+      function updatePriceScale() {
+        const scale = document.getElementById("priceScale");
+        scale.innerHTML = `
+                <div>${(currentPrice + 5).toFixed(2)}</div>
+                <div>${currentPrice.toFixed(2)}</div>
+                <div>${(currentPrice - 5).toFixed(2)}</div>
+            `;
+      }
+
+      // Initialize chart
+      const ctx = document.getElementById("tradingChart").getContext("2d");
+      const tradingChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: Array.from({ length: 30 }, (_, i) => ""),
+          datasets: [
+            {
+              data: priceHistory,
+              borderColor: "#3b82f6",
+              borderWidth: 2,
+              tension: 0.1,
+              pointRadius: 0,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { display: false },
+            y: {
+              display: false,
+              min: Math.min(...priceHistory) - 2,
+              max: Math.max(...priceHistory) + 2,
+            },
+          },
+          animation: { duration: 0 },
+        },
+      });
+
+      // Update chart data
+      function updateChartData() {
+        tradingChart.data.datasets[0].data = priceHistory;
+        tradingChart.options.scales.y.min = Math.min(...priceHistory) - 2;
+        tradingChart.options.scales.y.max = Math.max(...priceHistory) + 2;
+        tradingChart.update();
+      }
+
+      // Prediction game
+      document
+        .getElementById("predictUp")
+        .addEventListener("click", () => startPrediction("up"));
+      document
+        .getElementById("predictDown")
+        .addEventListener("click", () => startPrediction("down"));
+
+      function startPrediction(direction) {
+        if (currentPrediction) return;
+
+        currentPrediction = direction;
+        startPriceForPrediction = currentPrice;
+
+        document.getElementById("predictUp").disabled = true;
+        document.getElementById("predictDown").disabled = true;
+
+        predictionTimeout = setTimeout(checkPredictionResult, 10000);
+
+        const resultMessage = document.getElementById("resultMessage");
+        resultMessage.style.display = "none";
+      }
+
+      function checkPredictionResult() {
+        const endPrice = currentPrice;
+        const priceChange = endPrice - startPriceForPrediction;
+        const resultMessage = document.getElementById("resultMessage");
+
+        let isCorrect = false;
+        if (
+          (currentPrediction === "up" && priceChange > 0) ||
+          (currentPrediction === "down" && priceChange < 0)
+        ) {
+          isCorrect = true;
+        }
+
+        if (isCorrect) {
+          accountBalance += 38.5;
+          resultMessage.textContent = `Correct! +$38.50`;
+          resultMessage.className = "result-message win";
+        } else {
+          accountBalance -= 15.9;
+          resultMessage.textContent = `Wrong! -$15.90`;
+          resultMessage.className = "result-message lose";
+        }
+
+        resultMessage.style.display = "block";
+        updateBalanceDisplay();
+
+        currentPrediction = null;
+        document.getElementById("predictUp").disabled = false;
+        document.getElementById("predictDown").disabled = false;
+      }
+
+      // Trading buttons
+      document.getElementById("buyButton").addEventListener("click", () => {
+        alert(`Buy order at $${currentPrice.toFixed(2)}`);
+      });
+
+      document.getElementById("shortButton").addEventListener("click", () => {
+        alert(`Short order at $${currentPrice.toFixed(2)}`);
+      });
+
+      // Update everything periodically
+      setInterval(updateDateTime, 1000);
+      setInterval(() => {
+        updateStockPrice();
+        updateChartData();
+      }, 800);
+    </script>
+  </body>
+</html>
